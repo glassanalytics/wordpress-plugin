@@ -2,8 +2,10 @@
 /**
  * Plugin Name: Glass Analytics
  * Description: Add Glass Analytics tracking to your site
- * Version: 1.0
+ * Version: 1.7
  * Author: Glass Analytics
+ * License: GPL-2.0+
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
 // Make sure we don't expose any info if called directly
@@ -24,8 +26,7 @@ register_activation_hook(__FILE__, 'glass_analytics_activate');
 function glass_analytics_activate() {
     // Default settings
     $default_options = array(
-        'site_id' => 'default',
-        'workspace_id' => '',
+        'tracking_id' => '',
         'script_url' => 'https://staging-cdn.glassanalytics.com/analytics.min.js'
     );
     
@@ -40,8 +41,7 @@ function glass_analytics_get_options() {
     // Set defaults if options don't exist
     if (!$options) {
         $options = array(
-            'site_id' => 'default',
-            'workspace_id' => '',
+            'tracking_id' => '',
             'script_url' => 'https://staging-cdn.glassanalytics.com/analytics.min.js'
         );
     }
@@ -51,33 +51,46 @@ function glass_analytics_get_options() {
         $options['script_url'] = 'https://staging-cdn.glassanalytics.com/analytics.min.js';
     }
     
-    // Make sure workspace_id exists
-    if (!isset($options['workspace_id'])) {
-        $options['workspace_id'] = '';
-    }
-    
-    // Make sure site_id exists and is not empty
-    if (!isset($options['site_id']) || empty($options['site_id'])) {
-        $options['site_id'] = 'default';
+    // Make sure tracking_id exists
+    if (!isset($options['tracking_id'])) {
+        $options['tracking_id'] = '';
     }
     
     return $options;
 }
 
 
-// Add script to head
-function glass_analytics_add_script() {
+// Add script using WordPress enqueue system
+function glass_analytics_register_script() {
     $options = glass_analytics_get_options();
-    $site_id = !empty($options['site_id']) ? sanitize_text_field($options['site_id']) : '';
-    $script_url = !empty($options['script_url']) ? esc_url($options['script_url']) : 'https://staging-cdn.glassanalytics.com/analytics.min.js';
     
-    if (!empty($site_id)) {
-        echo '<script src="' . $script_url . '" data-site="' . esc_attr($site_id) . '"></script>';
-    } else {
-        echo '<script src="' . $script_url . '"></script>';
+    // Only proceed if we have a valid tracking ID with the correct format
+    if (!empty($options['tracking_id']) && strpos($options['tracking_id'], '/') !== false) {
+        // Parse tracking ID to get site_id
+        // Format: workspace_id/site_id
+        $tracking_parts = explode('/', $options['tracking_id']);
+        $site_id = sanitize_text_field($tracking_parts[1]);
+        $script_url = !empty($options['script_url']) ? esc_url($options['script_url']) : 'https://staging-cdn.glassanalytics.com/analytics.min.js';
+        
+        // For Glass Analytics, we need to use the script loader tag filter
+        // to add the data-site attribute properly
+        if (!empty($site_id)) {
+            add_filter('script_loader_tag', function($tag, $handle, $src) use ($site_id) {
+                if ('glass-analytics' !== $handle) {
+                    return $tag;
+                }
+                // Replace the script tag with one that includes our data-site attribute
+                return str_replace('<script', '<script data-site="' . esc_attr($site_id) . '"', $tag);
+            }, 10, 3);
+        }
+        
+        // Register and enqueue the script
+        // Using plugin version as script version for proper cache busting
+        $version = '1.2'; // Match this with your plugin version
+        wp_enqueue_script('glass-analytics', $script_url, array(), $version, false);
     }
 }
-add_action('wp_head', 'glass_analytics_add_script');
+add_action('wp_enqueue_scripts', 'glass_analytics_register_script');
 
 // Add admin menu with hover dropdown
 function glass_analytics_add_admin_menu() {
@@ -165,13 +178,17 @@ function glass_analytics_admin_js() {
             analyticsLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 var options = <?php echo json_encode(glass_analytics_get_options()); ?>;
-                var site_id = options.site_id;
-                var workspace_id = options.workspace_id;
+                var tracking_id = options.tracking_id;
                 
-                if (!site_id || !workspace_id) {
-                    alert('Please configure your Site ID and Workspace ID in Glass Analytics settings.');
+                if (!tracking_id || tracking_id.indexOf('/') === -1) {
+                    alert('Please configure your Tracking ID in the format "workspace_id/site_id" in Glass Analytics settings.');
                     return;
                 }
+                
+                // Extract workspace_id and site_id from tracking_id
+                var parts = tracking_id.split('/');
+                var workspace_id = parts[0];
+                var site_id = parts[1];
                 
                 window.open('https://staging.app.glassanalytics.com/' + workspace_id + '/site/' + site_id, '_blank');
             });
@@ -200,14 +217,32 @@ add_action('admin_init', 'glass_analytics_register_settings');
 function glass_analytics_validate_options($input) {
     $valid = array();
     
-    // Validate site_id - ensure it's not empty
-    $valid['site_id'] = sanitize_text_field($input['site_id']);
-    if (empty($valid['site_id'])) {
-        $valid['site_id'] = 'default';
-    }
+    // Validate tracking_id - ensure it has the correct format (workspace_id/site_id)
+    $tracking_id = sanitize_text_field($input['tracking_id']);
     
-    // Validate workspace_id
-    $valid['workspace_id'] = sanitize_text_field($input['workspace_id']);
+    // Check if the tracking ID contains a slash
+    if (empty($tracking_id)) {
+        add_settings_error(
+            'glass_analytics_options',
+            'tracking_id',
+            'Tracking ID cannot be empty.',
+            'error'
+        );
+        $valid['tracking_id'] = '';
+    } elseif (strpos($tracking_id, '/') === false) {
+        // Tracking ID must contain a slash
+        add_settings_error(
+            'glass_analytics_options',
+            'tracking_id',
+            'Tracking ID must be in the format "workspace_id/site_id".',
+            'error'
+        );
+        // Keep the input value so the user can correct it
+        $valid['tracking_id'] = $tracking_id;
+    } else {
+        // Valid format
+        $valid['tracking_id'] = $tracking_id;
+    }
     
     $valid['script_url'] = esc_url_raw($input['script_url']);
     return $valid;
@@ -217,6 +252,11 @@ function glass_analytics_validate_options($input) {
 function glass_analytics_options_page() {
     // Get options
     $options = glass_analytics_get_options();
+    
+    // Set a default tracking_id value based on existing data if tracking_id isn't set
+    if (empty($options['tracking_id']) && !empty($options['workspace_id']) && !empty($options['site_id'])) {
+        $options['tracking_id'] = $options['workspace_id'] . '/' . $options['site_id'];
+    }
     ?>
     <div class="wrap">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
@@ -227,17 +267,10 @@ function glass_analytics_options_page() {
             ?>
             <table class="form-table">
                 <tr valign="top">
-                    <th scope="row">Site ID</th>
+                    <th scope="row">Tracking ID</th>
                     <td>
-                        <input type="text" name="glass_analytics_options[site_id]" value="<?php echo esc_attr($options['site_id']); ?>" class="regular-text" required />
-                        <p class="description">Enter your site ID for Glass Analytics.</p>
-                    </td>
-                </tr>
-                <tr valign="top">
-                    <th scope="row">Workspace ID</th>
-                    <td>
-                        <input type="text" name="glass_analytics_options[workspace_id]" value="<?php echo esc_attr($options['workspace_id']); ?>" class="regular-text" required />
-                        <p class="description">Enter your workspace ID.</p>
+                        <input type="text" name="glass_analytics_options[tracking_id]" value="<?php echo esc_attr($options['tracking_id']); ?>" class="regular-text" required />
+                        <p class="description">Enter your tracking ID in the format <code>workspace_id/site_id</code>. For example: <code>my-workspace/my-site</code></p>
                     </td>
                 </tr>
                 <!-- Script URL option - hidden but preserved in the database -->
