@@ -8,9 +8,8 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-// Make sure we don't expose any info if called directly
-if (!function_exists('add_action')) {
-    echo 'Hi there! I\'m just a plugin, not much I can do when called directly.';
+// Exit if accessed directly
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -60,7 +59,7 @@ function glass_analytics_get_options() {
 }
 
 
-// Add script using WordPress enqueue system
+// Register and enqueue frontend tracking script
 function glass_analytics_register_script() {
     $options = glass_analytics_get_options();
     
@@ -71,6 +70,15 @@ function glass_analytics_register_script() {
         $tracking_parts = explode('/', $options['tracking_id']);
         $site_id = sanitize_text_field($tracking_parts[1]);
         $script_url = !empty($options['script_url']) ? esc_url($options['script_url']) : 'https://staging-cdn.glassanalytics.com/analytics.min.js';
+        
+        // Register the script first
+        wp_register_script(
+            'glass-analytics',         // Handle
+            $script_url,               // Source
+            array(),                   // Dependencies
+            '1.7',                     // Version (matching plugin version)
+            false                      // Load in header
+        );
         
         // For Glass Analytics, we need to use the script loader tag filter
         // to add the data-site attribute properly
@@ -84,10 +92,8 @@ function glass_analytics_register_script() {
             }, 10, 3);
         }
         
-        // Register and enqueue the script
-        // Using plugin version as script version for proper cache busting
-        $version = '1.2'; // Match this with your plugin version
-        wp_enqueue_script('glass-analytics', $script_url, array(), $version, false);
+        // Enqueue the script
+        wp_enqueue_script('glass-analytics');
     }
 }
 add_action('wp_enqueue_scripts', 'glass_analytics_register_script');
@@ -142,62 +148,95 @@ function glass_analytics_add_admin_menu() {
 }
 add_action('admin_menu', 'glass_analytics_add_admin_menu');
 
-// Enqueue admin styles
+// Register and enqueue admin styles
 function glass_analytics_admin_styles() {
-    wp_enqueue_style('glass-analytics-admin', GLASS_ANALYTICS_URL . 'assets/glass-admin.css', array(), '1.0.4'); // Using version to manage caching
+    wp_register_style(
+        'glass-analytics-admin',      // Handle
+        GLASS_ANALYTICS_URL . 'assets/glass-admin.css',  // Source
+        array(),                      // Dependencies
+        '1.0.4'                       // Version for cache management
+    );
+    wp_enqueue_style('glass-analytics-admin');
 }
 add_action('admin_enqueue_scripts', 'glass_analytics_admin_styles');
 
 // No custom class needed, using standard dashicon
 
-// Add JavaScript for menu behavior
-function glass_analytics_admin_js() {
-    ?>
+// Register and enqueue admin JavaScript
+function glass_analytics_admin_scripts() {
+    // Register the script but don't output it yet
+    wp_register_script(
+        'glass-analytics-admin',      // Handle
+        false,                         // No actual file, we'll use inline script
+        array('jquery'),               // Dependencies
+        '1.0.4',                       // Version
+        true                           // In footer
+    );
     
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // First find the main menu item
-        var mainMenuItem = document.querySelector('a.toplevel_page_glass-analytics-noop');
-        
-        if (mainMenuItem) {
-            // Completely disable clicks
-            mainMenuItem.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-            }, true);
+    // Get the options to pass to our script
+    $options = glass_analytics_get_options();
+    
+    // Localize the script with our data - wp_localize_script handles JSON encoding and escaping
+    wp_localize_script(
+        'glass-analytics-admin',
+        'glassAnalyticsData',
+        array(
+            'options' => array(
+                'tracking_id' => isset($options['tracking_id']) ? esc_js($options['tracking_id']) : '',
+                'script_url' => isset($options['script_url']) ? esc_url($options['script_url']) : ''
+            ),
+            'adminUrl' => esc_url(admin_url())
+        )
+    );
+    
+    // Add the inline script content
+    $inline_script = "
+        document.addEventListener('DOMContentLoaded', function() {
+            // First find the main menu item
+            var mainMenuItem = document.querySelector('a.toplevel_page_glass-analytics-noop');
             
-            // Set attributes to make it non-clickable
-            mainMenuItem.setAttribute('onclick', 'return false;');
-            mainMenuItem.setAttribute('href', 'javascript:void(0);');
-        }
-        
-        // Handle click on "Open Analytics" submenu item
-        var analyticsLink = document.querySelector('a[href="admin.php?page=glass-analytics-open"]');
-        if (analyticsLink) {
-            analyticsLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                var options = <?php echo json_encode(glass_analytics_get_options()); ?>;
-                var tracking_id = options.tracking_id;
+            if (mainMenuItem) {
+                // Completely disable clicks
+                mainMenuItem.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }, true);
                 
-                if (!tracking_id || tracking_id.indexOf('/') === -1) {
-                    alert('Please configure your Tracking ID in the format "workspace_id/site_id" in Glass Analytics settings.');
-                    return;
-                }
-                
-                // Extract workspace_id and site_id from tracking_id
-                var parts = tracking_id.split('/');
-                var workspace_id = parts[0];
-                var site_id = parts[1];
-                
-                window.open('https://staging.app.glassanalytics.com/' + workspace_id + '/site/' + site_id, '_blank');
-            });
-        }
-    });
-    </script>
-    <?php
+                // Set attributes to make it non-clickable
+                mainMenuItem.setAttribute('onclick', 'return false;');
+                mainMenuItem.setAttribute('href', 'javascript:void(0);');
+            }
+            
+            // Handle click on \"Open Analytics\" submenu item
+            var analyticsLink = document.querySelector('a[href=\"admin.php?page=glass-analytics-open\"]');
+            if (analyticsLink) {
+                analyticsLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var options = glassAnalyticsData.options;
+                    var tracking_id = options.tracking_id;
+                    
+                    if (!tracking_id || tracking_id.indexOf('/') === -1) {
+                        alert('Please configure your Tracking ID in the format \"workspace_id/site_id\" in Glass Analytics settings.');
+                        return;
+                    }
+                    
+                    // Extract workspace_id and site_id from tracking_id
+                    var parts = tracking_id.split('/');
+                    var workspace_id = parts[0];
+                    var site_id = parts[1];
+                    
+                    window.open('https://staging.app.glassanalytics.com/' + workspace_id + '/site/' + site_id, '_blank');
+                });
+            }
+        });
+    ";
+    
+    // Add inline script and enqueue it
+    wp_add_inline_script('glass-analytics-admin', $inline_script);
+    wp_enqueue_script('glass-analytics-admin');
 }
-add_action('admin_footer', 'glass_analytics_admin_js');
+add_action('admin_enqueue_scripts', 'glass_analytics_admin_scripts');
 
 // Add Settings link to plugins page
 function glass_analytics_add_settings_link($links) {

@@ -6,4 +6,3 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 
 // Delete options
 delete_option('glass_analytics_options');
-?>
