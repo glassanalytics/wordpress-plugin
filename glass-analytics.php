@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Glass Analytics
  * Description: Add Glass Analytics tracking to your site
- * Version: 1.0
+ * Version: 1.1
  * Author: Glass Analytics
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt

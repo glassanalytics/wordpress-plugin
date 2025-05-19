@@ -4,7 +4,7 @@ Tags: analytics, statistics, tracking
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.2
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -52,14 +52,14 @@ The Glass Analytics service is provided by Linkly Ltd:
 * Privacy Policy: https://glassanalytics.com/docs/privacy-policy
 
 == Changelog ==
-= 1.7 =
+= 1.1 =
 * Updated plugin to comply with WordPress.org guidelines
 * Improved script and style enqueuing
 * Added documentation for external services
 
-= 1.2 =
+= 1.0 =
 * Initial public release
 
 == Upgrade Notice ==
-= 1.7 =
+= 1.1 =
 This update improves compatibility with WordPress standards and adds proper documentation.
