@@ -61,5 +61,5 @@ The Glass Analytics service is provided by Linkly Ltd:
 * Initial public release
 
 == Upgrade Notice ==
-= 1.10 =
+= 1.1 =
 This update improves compatibility with WordPress standards and adds proper documentation.
