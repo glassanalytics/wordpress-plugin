@@ -16,37 +16,28 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          
       - name: Convert readme.txt to README.md
         run: |
-          # Create a PHP script to convert readme.txt to README.md
-          cat > convert.php <<'EOF'
-          <?php
-          // Read the readme.txt file
-          $readme = file_get_contents('readme.txt');
-          
-          // Convert WordPress headings to Markdown headings
-          $readme = preg_replace('/=== (.*) ===/i', '# $1', $readme);
-          $readme = preg_replace('/== (.*) ==/i', '## $1', $readme);
-          $readme = preg_replace('/= (.*) =/i', '### $1', $readme);
-          
-          // Convert WordPress bullet points to Markdown bullet points
-          $readme = preg_replace('/^\* /m', '- ', $readme);
-          
-          // Add the banner section
-          $banner = "A WordPress plugin for website analytics tracking and reporting.\n\n";
-          $readme = preg_replace('/(# Glass Analytics)/', "$1\n\n$banner", $readme);
-          
-          // Write the content to README.md
-          file_put_contents('README.md', $readme);
+          # Create a bash script to convert readme.txt to README.md
+          cat > convert.sh <<'EOF'
+          #!/bin/bash
+
+          # Create the README.md file
+          echo "# Glass Analytics
+
+          A WordPress plugin for website analytics tracking and reporting.
+          " > README.md
+
+          # Convert WordPress headings to Markdown and append to README.md
+          cat readme.txt | sed 's/=== \(.*\) ===/# \1/g' | \
+                          sed 's/== \(.*\) ==/## \1/g' | \
+                          sed 's/= \(.*\) =/### \1/g' | \
+                          sed 's/^\* /- /g' >> README.md
           EOF
           
-          # Run the PHP script
-          php convert.php
+          # Make the script executable and run it
+          chmod +x convert.sh
+          ./convert.sh
           
       - name: Commit and push changes if README.md has changed
         run: |
