@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Glass Analytics
  * Description: Add Glass Analytics tracking to your site
- * Version: 1.8
+ * Version: 1.0
  * Author: Glass Analytics
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -26,7 +26,7 @@ function glass_analytics_activate() {
     // Default settings
     $default_options = array(
         'tracking_id' => '',
-        'script_url' => 'https://staging-cdn.glassanalytics.com/analytics.min.js'
+        'script_url' => 'https://cdn.glassanalytics.com/analytics.min.js'
     );
     
     // Add options if they don't exist
@@ -41,13 +41,13 @@ function glass_analytics_get_options() {
     if (!$options) {
         $options = array(
             'tracking_id' => '',
-            'script_url' => 'https://staging-cdn.glassanalytics.com/analytics.min.js'
+            'script_url' => 'https://cdn.glassanalytics.com/analytics.min.js'
         );
     }
     
     // Make sure all expected options exist
     if (!isset($options['script_url']) || empty($options['script_url'])) {
-        $options['script_url'] = 'https://staging-cdn.glassanalytics.com/analytics.min.js';
+        $options['script_url'] = 'https://cdn.glassanalytics.com/analytics.min.js';
     }
     
     // Make sure tracking_id exists
@@ -69,7 +69,7 @@ function glass_analytics_register_script() {
         // Format: workspace_id/site_id
         $tracking_parts = explode('/', $options['tracking_id']);
         $site_id = sanitize_text_field($tracking_parts[1]);
-        $script_url = !empty($options['script_url']) ? esc_url($options['script_url']) : 'https://staging-cdn.glassanalytics.com/analytics.min.js';
+        $script_url = !empty($options['script_url']) ? esc_url($options['script_url']) : 'https://cdn.glassanalytics.com/analytics.min.js';
         
         // Register the script first
         wp_register_script(
@@ -226,7 +226,7 @@ function glass_analytics_admin_scripts() {
                     var workspace_id = parts[0];
                     var site_id = parts[1];
                     
-                    window.open('https://staging.app.glassanalytics.com/' + workspace_id + '/site/' + site_id, '_blank');
+                    window.open('https://app.glassanalytics.com/' + workspace_id + '/site/' + site_id, '_blank');
                 });
             }
         });

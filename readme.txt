@@ -4,7 +4,7 @@ Tags: analytics, statistics, tracking
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.2
-Stable tag: 1.8
+Stable tag: 1.0
 License: GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
@@ -32,8 +32,8 @@ This plugin connects to the Glass Analytics service to collect and display websi
 * Data Collected: The service collects data including page views, referring URLs, browser information, device information, and general geographic location of visitors (based on IP address, which is anonymized).
 * When Data is Sent: Data is sent when visitors access pages on your website where the Glass Analytics tracking script is active.
 * Service Domains: The plugin connects to the following domains:
-  * https://staging-cdn.glassanalytics.com - Hosts the tracking script
-  * https://staging.app.glassanalytics.com - Hosts the analytics dashboard
+  * https://cdn.glassanalytics.com - Hosts the tracking script
+  * https://app.glassanalytics.com - Hosts the analytics dashboard
 
 The Glass Analytics service is provided by Glass Analytics, Inc.:
 * Terms of Service: https://glassanalytics.com/terms
