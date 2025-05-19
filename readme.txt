@@ -8,10 +8,22 @@ Stable tag: 1.0
 License: GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
-Add Glass Analytics tracking to your WordPress site.
+Glass Analytics is the best Google Analytics alternative.
 
 == Description ==
-Glass Analytics is a lightweight WordPress plugin that integrates with your website to provide detailed analytics about user behavior, page views, and engagement metrics.
+Glass Analytics is a powerful, modern Google Analytics alternative for your Wordpress site. You don't have to edit the code in your Wordpress template to use Glass Analytics.
+
+👉 **[Check out our live demo](https://glassanalytics.com/demo) or [sign up for a free 30-day trial](https://app.glassanalytics.com/register)**.
+
+You’ll need a paid [subscription](https://app.glassanalytics.com/register) to Glass Analytics to start collecting data with this plugin. 
+
+## Why choose Glass Analytics?
+
+Glass Analytics is a refreshing way of looking at your web analytics. Google Analytics 4 is complicated to understand and difficult to use. Glass Analytics fixes this with elegant, beautiful analytics, and a feature set far in excess of what GA4 provides.
+
+## Fast Set Up
+
+Go from starting a trial to real-time data analytics in minutes. No coding or snippets required.
 
 == Installation ==
 1. Upload the plugin files to the `/wp-content/plugins/glass-analytics` directory, or install the plugin through the WordPress plugins screen.
@@ -35,9 +47,9 @@ This plugin connects to the Glass Analytics service to collect and display websi
   * https://cdn.glassanalytics.com - Hosts the tracking script
   * https://app.glassanalytics.com - Hosts the analytics dashboard
 
-The Glass Analytics service is provided by Glass Analytics, Inc.:
-* Terms of Service: https://glassanalytics.com/terms
-* Privacy Policy: https://glassanalytics.com/privacy
+The Glass Analytics service is provided by Linkly Ltd:
+* Terms of Service: https://glassanalytics.com/docs/terms
+* Privacy Policy: https://glassanalytics.com/docs/privacy-policy
 
 == Changelog ==
 = 1.7 =
