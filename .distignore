@@ -1,0 +1,37 @@
+# Directories
+/.wordpress-org
+/.git
+/.github
+/bin
+/node_modules
+/tests
+
+# Files
+.distignore
+.gitignore
+.gitattributes
+.editorconfig
+.eslintrc
+.eslintignore
+.prettierrc
+.prettierignore
+.stylelintrc
+.stylelintignore
+.travis.yml
+CONTRIBUTING.md
+README.md
+composer.json
+composer.lock
+package.json
+package-lock.json
+phpunit.xml
+phpunit.xml.dist
+phpcs.xml
+phpcs.xml.dist
+yarn.lock
+rollup.config.js
+webpack.config.js
+
+# Specific plugin-level ignores
+*.map
+*.log
