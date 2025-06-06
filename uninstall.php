@@ -5,4 +5,4 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 }
 
 // Delete options
-delete_option('glass_analytics_options');
+delete_option('userbird_options');

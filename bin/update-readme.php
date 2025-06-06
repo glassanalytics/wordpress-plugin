@@ -24,7 +24,7 @@ if (!file_exists($readme_txt)) {
 $content = file_get_contents($readme_txt);
 
 // Add a banner message at the top
-$banner = "# Glass Analytics
+$banner = "# UserBird
 
 A WordPress plugin for website analytics tracking and reporting.
 

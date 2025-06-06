@@ -2,8 +2,8 @@
 
 A WordPress plugin for website analytics tracking and reporting.
 
-# Glass Analytics
-Contributors: glassanalytics
+# Userbird
+Contributors: userbird
 Tags: analytics, statistics, tracking
 Requires at least: 5.0
 Tested up to: 6.8
@@ -12,14 +12,14 @@ Stable tag: 1.1
 License: GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
-Glass Analytics is the best Google Analytics alternative.
+Userbird is the best Google Analytics alternative.
 
 ## Description
-Glass Analytics is a powerful, modern Google Analytics alternative for your Wordpress site. You don't have to edit the code in your Wordpress template to use Glass Analytics.
+Userbird is a powerful, modern Google Analytics alternative for your Wordpress site. You don't have to edit the code in your Wordpress template to use Userbird.
 
-👉 **[Check out our live demo](https://glassanalytics.com/demo) or [sign up for a free 30-day trial](https://app.glassanalytics.com/register)**.
+👉 **[Check out our live demo](https://userbird.com/demo) or [sign up for a free 30-day trial](https://app.userbird.com/register)**.
 
-You’ll need a paid [subscription](https://app.glassanalytics.com/register) to Glass Analytics to start collecting data with this plugin. 
+You’ll need a paid [subscription](https://app.userbird.com/register) to Userbird to start collecting data with this plugin. 
 
 ## Why choose Glass Analytics?
 
@@ -30,9 +30,9 @@ Glass Analytics is a refreshing way of looking at your web analytics. Google Ana
 Go from starting a trial to real-time data analytics in minutes. No coding or snippets required.
 
 ## Installation
-1. Upload the plugin files to the `/wp-content/plugins/glass-analytics` directory, or install the plugin through the WordPress plugins screen.
+1. Upload the plugin files to the `/wp-content/plugins/userbird` directory, or install the plugin through the WordPress plugins screen.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Configure the plugin settings through the 'Glass Analytics' menu in WordPress admin.
+3. Configure the plugin settings through the 'Userbird' menu in WordPress admin.
 
 ## Features
 - Simple setup with minimal configuration required
@@ -41,19 +41,19 @@ Go from starting a trial to real-time data analytics in minutes. No coding or sn
 - Export analytics data in various formats
 
 ## External Services
-This plugin connects to the Glass Analytics service to collect and display website usage data:
+This plugin connects to the Userbird service to collect and display website usage data:
 
-### Glass Analytics Service
+### Userbird Service
 - Purpose: This service collects anonymous visitor data from your website to provide you with analytics about page views, visitor behavior, and site engagement.
 - Data Collected: The service collects data including page views, referring URLs, browser information, device information, and general geographic location of visitors (based on IP address, which is anonymized).
-- When Data is Sent: Data is sent when visitors access pages on your website where the Glass Analytics tracking script is active.
+- When Data is Sent: Data is sent when visitors access pages on your website where the Userbird tracking script is active.
 - Service Domains: The plugin connects to the following domains:
-  * https://cdn.glassanalytics.com - Hosts the tracking script
-  * https://app.glassanalytics.com - Hosts the analytics dashboard
+  * https://cdn.userbird.com - Hosts the tracking script
+  * https://app.userbird.com - Hosts the analytics dashboard
 
-The Glass Analytics service is provided by Linkly Ltd:
-- Terms of Service: https://glassanalytics.com/docs/terms
-- Privacy Policy: https://glassanalytics.com/docs/privacy-policy
+The Userbird service is provided by Linkly Ltd:
+- Terms of Service: https://userbird.com/docs/terms
+- Privacy Policy: https://userbird.com/docs/privacy-policy
 
 ## Changelog
 ### 1.1

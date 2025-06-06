@@ -1,4 +1,4 @@
-# Contributing to Glass Analytics
+# Contributing to UserBird
 
 Thank you for your interest in contributing to Glass Analytics! This document provides guidelines for contributing to this WordPress plugin and explains our workflow between GitHub and WordPress.org's SVN repository.
 
@@ -27,7 +27,7 @@ We use GitHub Actions to automatically deploy the plugin to WordPress.org's SVN 
    - Once approved and merged, your changes will be in the main branch
 
 2. **Release Process**:
-   - Update the version number in both `glass-analytics.php` and `readme.txt`
+   - Update the version number in both `userbird.php` and `readme.txt`
    - Add a changelog entry in `readme.txt` under the "Changelog" section
    - Commit these changes to the main branch
    - Create and push a new tag matching your version number:
@@ -62,7 +62,7 @@ There are two different types of "assets" in WordPress plugin development:
    - These are files used by the plugin itself
    - CSS, JS, images used in the admin or frontend
    - These files WILL be included in the plugin deployment
-   - Example: `assets/glass-admin.css`, `assets/images/glass-icon.svg`
+   - Example: `assets/userbird-admin.css`, `assets/images/userbird-icon.svg`
 
 2. **WordPress.org Repository Assets** (`.wordpress-org/` directory):
    - These are files used by the WordPress.org plugin repository
@@ -80,7 +80,7 @@ If you need to manually deploy to WordPress.org SVN:
 
 1. Check out the SVN repository:
    ```bash
-   svn checkout https://plugins.svn.wordpress.org/glass-analytics/
+   svn checkout https://plugins.svn.wordpress.org/userbird/
    ```
 
 2. Copy the current plugin files to the `trunk` directory (excluding files in `.distignore`)
